@@ -2,7 +2,7 @@
 This Ditch Day map was used for the Zootopia stack in 2016 
 (Adam Ball, Melissa Chang, Nick Cho, Shi En Kim, Bryant Lin).
 This map can be generalized for future stacks.  Feel free to
-contact me (Bryant mr.b.lin.7@gmail.com) for any questions on
+contact me (Bryant mr.b.lin.7\[AT\]gmail\[DOT\]com) for any questions on
 how to use it.
 
 ## Setup
@@ -39,7 +39,7 @@ which is licensed under an [Apache 2.0 license](./GOOGLE_LICENSE).  The
 license generally means you can use/modify/distribute the code,
 but you MUST include the license included for that part of the code.
 
-Copyright [yyyy] [Bryant Lin]
+Copyright 2016 Bryant Lin
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
