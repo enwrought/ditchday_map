@@ -1,8 +1,10 @@
 # Ditch Day Map
-This Ditch Day map was used for the Zootopia stack in 2016 
+This map was used for the [Caltech](http://www.caltech.edu)
+[Ditch Day](https://www.admissions.caltech.edu/content/traditions-and-pranks) 
+Zootopia stack in 2016 
 (Adam Ball, Melissa Chang, Nick Cho, Shi En Kim, Bryant Lin).
 This map can be generalized for future stacks.  Feel free to
-contact me (Bryant mr.b.lin.7\[AT\]gmail\[DOT\]com) for any questions on
+contact me (Bryant mr.b.lin.7 \[AT\] gmail \[DOT\] com) for any questions on
 how to use it.
 
 ## Setup
