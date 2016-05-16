@@ -7,7 +7,14 @@
    /*
     * Just some convenient location variables.
     * These are estimates of the boundary around Caltech.
-    */
+    * Note that these are used by the functions, so don't
+    * delete them.
+    * 
+    * CENTER is the center for the purpose of the Zootopia
+    * stack, but MAP_CENTER is more accurate for a center of 
+    * the map.
+   */
+  var MAP_CENTER = {lat: 34.139, lng: -118.1252};
   var CENTER = {lat: 34.138, lng: -118.1252};
   var BOTTOM_RIGHT = {lat: 34.135942, lng: -118.121307};
   var TOP_RIGHT = {lat: 34.141774, lng: -118.121353};
@@ -37,18 +44,38 @@
       ]
     }
   ];
+
+
+  /**
+   * Updates the bounds object with the bounds of campus.
+   * @param{google.maps.Map}{map} Map object to set boundary
+   * @returns{google.maps.LatLngBounds} Bounds object in case it
+   *          needs to be extended
+   */
+  function set_bounds(map) {
+    // Set the SW and NE coordinates
+    var bounds = new google.maps.LatLngBounds(BOTTOM_LEFT, TOP_RIGHT);
+    bounds.extend(new google.maps.LatLng(BOTTOM_RIGHT.lat, BOTTOM_RIGHT.lng));
+    bounds.extend(new google.maps.LatLng(TOP_LEFT.lat, TOP_LEFT.lng));
+    // Other points should be inside
+
+    map.fitBounds(bounds);
+    return bounds;
+  }
   
   
   function display() {
     var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 17,
-      center: CENTER,
+      center: MAP_CENTER,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       styles: styleArray
     });
+
+    // Set the bounds
+    var bounds = set_bounds(map);
     
     var tundra_label = write_label('Tundra Town', 34.1395, -118.123, map);
-
     // Define the LatLng coordinates for the polygon's path.
     var tundra_coords = [
       CENTER,
@@ -57,15 +84,7 @@
       RIGHT,
       CENTER
     ];
-    var tundra_town = new google.maps.Polygon({
-      paths: tundra_coords,
-      strokeColor: '#66FFFF',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#66FFFF',
-      fillOpacity: 0.35
-    });
-    tundra_town.setMap(map);
+    var tundra_town = add_polygon(tundra_coords, '#66FFFF', map);
     
     var sahara_label = write_label('Sahara Square', 34.137, -118.123, map);
     var sahara_coords = [
@@ -75,15 +94,7 @@
       BOTTOM,
       CENTER
     ];
-    var sahara_square = new google.maps.Polygon({
-      paths: sahara_coords,
-      strokeColor: '#FFD45C',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FFD45C',
-      fillOpacity: 0.35
-    });
-    sahara_square.setMap(map);
+    var sahara_square = add_polygon(sahara_coords, '#FFD45C', map);
       
     var rainforest_label = write_label('Rainforest District', 34.1395,
       -118.1265, map);
@@ -94,15 +105,7 @@
       LEFT,
       CENTER
     ];
-    var rainforest_district = new google.maps.Polygon({
-      paths: rainforest_coords,
-      strokeColor: '#008A2E',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#008A2E',
-      fillOpacity: 0.35
-    });
-    rainforest_district.setMap(map);
+    var rainforest_district = add_polygon(rainforest_coords, '#00BA2E', map);
     
     var downtown_label = write_label('Downtown', 34.137, -118.1265, map);
     var downtown_coords = [
@@ -112,22 +115,15 @@
       BOTTOM,
       CENTER
     ];
-    var downtown = new google.maps.Polygon({
-      paths: downtown_coords,
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FF0000',
-      fillOpacity: 0.35
-    });
-    downtown.setMap(map);
+    var downtown = add_polygon(downtown_coords, '#FF0000', map);
   }
   
   /*
    ***********************************************************
    * End editable section
    * 
-   * Do not edit unless you know what you are doing.
+   * Generally recommend not editing unless something is not 
+   * good enough.
    ***********************************************************
   */
 
@@ -138,9 +134,15 @@
     * @param{string}{text} Text to display
     * @param{number}{latitude} Latitude of center
     * @param{number}{longitude} Longitude of center
-    * @param{object}{map} Google maps object.
+    * @param{google.map.Map}{map} Google maps object.
+    * @param{int}{font_size} Size of font, default to 24.
+    * @param{string}{align} Alignment, default to 'center'.
    */
-  function write_label(text, latitude, longitude, map) {
+  function write_label(text, latitude, longitude, map, font_size, align) {
+    // Set default parameters
+    font_size = set_default(font_size, 24);
+    align = set_default(align, 'center');
+
     var label = new MapLabel({
       text: text,
       position: new google.maps.LatLng(latitude, longitude),
@@ -149,6 +151,41 @@
       align: 'center'
     });
   }
+  
+  /**
+   * Helper functions to create and add polygon to map.
+   * @returns Generated google.maps.Polygon object
+   * @param{array}{coords} Array of LatLng objects of polygon vertices
+   * @param{string}{color} HTML hexadecimal color (should include '#')
+   * @param{google.maps.Map}{map} Google map object to draw polygon
+  */
+  function add_polygon(coords, color, map) {
+    var poly = new google.maps.Polygon({
+      paths: coords,
+      strokeColor: color,
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: color,
+      fillOpacity: 0.35
+    });
+    poly.setMap(map);
+    return poly;
+  }
+
+  /**
+   * Helper function to set default parameters
+   */
+  function set_default(argument, default_value) {
+    return typeof argument !== 'undefined' ? argument : default_value;
+  }
+
+
+  /*
+   ***********************************************************
+   * Beyond here is the rest of MapLabel stuff.
+   * Do not edit unless you know what you are doing.
+   * Also you should need to keep the license info.
+  */
 
   /**
    * @license
