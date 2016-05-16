@@ -74,6 +74,9 @@
 
     // Set the bounds
     var bounds = set_bounds(map);
+
+    // Draw location marker
+    add_location(map);
     
     var tundra_label = write_label('Tundra Town', 34.1395, -118.123, map);
     // Define the LatLng coordinates for the polygon's path.
@@ -179,7 +182,36 @@
     return typeof argument !== 'undefined' ? argument : default_value;
   }
 
+  /**
+   * Helper function to set marker on location.
+   * @param{google.maps.Map}{map} Map object to display location
+  */
+  function add_location(map) {
+    var myloc = new google.maps.Marker({
+      clickable: false,
+      icon: new google.maps.MarkerImage('mobileimgs2.png',
+                                        new google.maps.Size(22,22),
+                                        new google.maps.Point(0,18),
+                                        new google.maps.Point(11,11)),
+      shadow: null,
+      zIndex: 999,
+      map: map
+    });
 
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          var me = new google.maps.LatLng(pos.coords.latitude, 
+            pos.coords.longitude);
+          myloc.setPosition(me);
+        }, 
+        function(error) {
+          console.log('Problem with getting location.');
+          console.log(error);
+        }
+      );
+    }
+  }
   /*
    ***********************************************************
    * Beyond here is the rest of MapLabel stuff.
