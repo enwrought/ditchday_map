@@ -10,7 +10,13 @@ how to use it.
 ## Setup
 You need a webhosting service and a Google Maps API key.  Fortunately
 these are pretty easy to get.  I just Googled free webhosting and
-ended up hosting it on [https://x10hosting.com](https://x10hosting.com).
+ended up hosting it on [https://byet.host](https://byet.host).  If you want
+the tracking feature, you'll have to find a host that also supports SSL
+(so you can use https://).  The byethost website seemed to work for me
+on that front as well, even though the certificate is not trusted and 
+Chrome might give a warning.  The current location marker is nice but
+not essential though.
+
 You can also host it on your personal Caltech site if you have it set up.
 
 The Google Maps Javascript API is available 

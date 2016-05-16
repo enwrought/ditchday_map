@@ -24,6 +24,19 @@
   var BOTTOM = {lat: 34.13594, lng: -118.1252};
   var RIGHT = {lat: 34.138, lng: -118.12132};
   var LEFT = {lat: 34.138, lng: -118.12795};
+
+  /*
+   * Other convenient locations that are used in the functions
+   * in the editable section.
+  */
+  var HOLLISTON_PARKING = {lat:34.1394, lng:-118.1224};
+  var DEL_MAR_PARKING = {lat:34.1402, lng:-118.1264};
+  var CSS_PARKING = {lat:34.13825, lng:-118.12176};
+  var BECKMAN_MALL = {lat:34.13827, lng:-118.12554};
+  var MUDD_COURTYARD = {lat:34.13629, lng:-118.12734};
+  var LLOYD = {lat:34.13709, lng:-118.12281};
+  // Grassy area in front of Winnett on Olive Walk
+  var OLIVE_WINNETT = {lat:34.13696, lng:-118.12387};
   
   /*
    * This is the style of the map background of the map.
@@ -68,7 +81,7 @@
     var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 17,
       center: MAP_CENTER,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
       styles: styleArray
     });
 
@@ -119,6 +132,22 @@
       CENTER
     ];
     var downtown = add_polygon(downtown_coords, '#FF0000', map);
+
+    // Add car locations
+    var car1 = add_car(HOLLISTON_PARKING, map, 'images/random.jpg'); 
+    var car2 = add_car(DEL_MAR_PARKING, map, 'images/random.jpg');
+    var car3 = add_car(CSS_PARKING, map, 'images/random.jpg');
+
+    // Add other locations
+    var station = add_marker(LLOYD, map, 'Zootopia Police Department',
+      'images/police-icon2.png');
+
+    var crime_scene = add_marker(MUDD_COURTYARD, map, 'Crime scene 00247');
+    var training = add_marker(BECKMAN_MALL, map, 
+      'Rainforest District Training Base');
+    var training2 = add_marker(OLIVE_WINNETT, map, 
+      'Sahara District Training Base');
+
   }
   
   /*
@@ -141,17 +170,22 @@
     * @param{int}{font_size} Size of font, default to 24.
     * @param{string}{align} Alignment, default to 'center'.
    */
-  function write_label(text, latitude, longitude, map, font_size, align) {
+  function write_label(text, latitude, longitude, map, font_size, align,
+                       min_zoom, max_zoom) {
     // Set default parameters
     font_size = set_default(font_size, 24);
     align = set_default(align, 'center');
+    min_zoom = set_default(min_zoom, 16);
+    max_zoom = set_default(max_zoom, 19);
 
     var label = new MapLabel({
       text: text,
       position: new google.maps.LatLng(latitude, longitude),
       map: map,
       fontSize: 24,
-      align: 'center'
+      align: 'center',
+      maxZoom: max_zoom,
+      minZoom: min_zoom
     });
   }
   
@@ -174,6 +208,57 @@
     poly.setMap(map);
     return poly;
   }
+  
+  /**
+   * Helper function to add car
+  */
+  function add_car(coords, map, image) {
+    var popup_html = '<img src="' + image + '" width=296 />';
+    return add_marker(coords, map, 'Vehicle last seen location',
+      'images/car-icon2.png', 17, popup_html, 250);
+  }
+
+  /**
+   * Helper function to create and add marker to map
+   * @returns{google.maps.Marker} Marker object
+   * @param{LatLng}{coords} A google.maps.LatLng object, or
+   *    a {lat: number, lng: number} literal of the location
+   * @param{google.maps.Map}{map} Google Map object to add icon
+   * @param{string}{title} Mouseover text for marker
+   * @param{string}{icon} Location of icon image (null for no image)
+   * @param{int}{zoom} How much to zoom into icon
+   * @param{string}{popup_html} HTML to pop up from the marker
+   * @param{int}{max_width} Max width of the popup info window
+  */
+  function add_marker(coords, map, title, icon, zoom, popup_html, max_width) {
+    zoom = set_default(zoom, 17);
+    title = set_default(title, '');
+    max_width = set_default(max_width, 250);
+    var args = {
+      position: coords,
+      map: map,
+      zoom: zoom,
+      title: title
+    }
+
+    if (typeof icon !== 'undefined' && icon != null) {
+      args['icon'] = icon;
+    }
+    var marker = new google.maps.Marker(args);
+    
+    // Add popup if necessary
+    if (typeof popup_html !== 'undefined') {
+      var info_window = new google.maps.InfoWindow({
+        content: popup_html,
+        maxWidth: max_width
+      });
+      marker.addListener('click', function() {
+        info_window.open(map, marker);
+      });
+    }
+
+    return marker;
+  }
 
   /**
    * Helper function to set default parameters
@@ -189,7 +274,7 @@
   function add_location(map) {
     var myloc = new google.maps.Marker({
       clickable: false,
-      icon: new google.maps.MarkerImage('mobileimgs2.png',
+      icon: new google.maps.MarkerImage('images/mobileimgs2.png',
                                         new google.maps.Size(22,22),
                                         new google.maps.Point(0,18),
                                         new google.maps.Point(11,11)),
